@@ -56,7 +56,7 @@ pipeline {
                     echo "Hello, this is deploy"
                 '''
             }
-        }
+        
     }
 
 
