@@ -12,6 +12,9 @@ pipeline {
         ansiColor('xterm')
     }
 
+parameters{
+    choice(name: 'Action', choices: ['apply', 'destroy'],  description: 'pick something')
+}
 stages {
         stage('Init') {
             steps {
@@ -42,6 +45,14 @@ stages {
                 }
                  
                }
+            }
+        }
+        stage('Trigger sg') {
+            when {
+                expression  { params.Action == 'apply'}
+            }
+            steps{
+                build job: '10-sg', parameters: [string(name: 'ACTION', value: 'apply')], propagate: true
             }
         }
 }
