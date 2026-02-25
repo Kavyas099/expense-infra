@@ -12,9 +12,7 @@ pipeline {
         ansiColor('xterm')
     }
 
-
-
- stages {
+stages {
         stage('Init') {
             steps {
                script{
@@ -29,9 +27,23 @@ pipeline {
                }
             }
         }
- 
- 
- }
+        stage('Apply') {
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+            }
+            steps {
+               script{
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh """
+                        cd 00-vpc
+                        terraform apply -auto-approve
+                    """
+                }
+                 
+               }
+            }
+        }
 
   post { 
         always { 
@@ -45,4 +57,5 @@ pipeline {
             echo 'I will run when pipeline is success'
         }
     }
+}
 }
