@@ -1,88 +1,48 @@
 pipeline {
-    agent { label 'AGENT-1' }
-
+    agent ( 'Agent-1')
     environment {
-        PROJECT   = 'expense'
-        COMPONENT = 'backend'
-        DEPLOY    = 'qa'
+        PROJECT='ROBOSHOP'
+        ENVIRONMENT='qa'
+        DEPLOY_TO='production'
     }
 
     options {
         disableConcurrentBuilds()
-        timeout(time: 10, unit: 'MINUTES')
+        timeout(time: 30, unit: 'MINUTES')
+        ansiColor('xterm')
     }
 
-    stages {
+}
 
-        stage('init') {
+ stages {
+        stage('Init') {
             steps {
-                script {
-                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                        sh '''
-                            cd 00-vpc
-                            terraform init -reconfigure
-                        '''
-                    }
+               script{
+                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                    sh """
+                        cd 00-vpc
+                        terraform init -reconfigure
+                        terraform plan
+                    """
                 }
-                sleep 5
+                 
+               }
             }
         }
+        
 
-        stage('Test') {
-            when {
-                environment name: 'DEPLOY', value: 'qa'
-            }
-            steps {
-                sh '''
-                    echo "Hello, this is test"
-                '''
-            }
-        }
+ }
 
-        stage('Deploy') {
-            input {
-                message "Should we continue?"
-                ok "Yes we should"
-            }
-            steps {
-                sh '''
-                    echo "Hello, this is deploy"
-                '''
-            }
-        }
-
-        stage('Parallel Stages') {
-            parallel {
-                stage('STAGE-1') {
-                    steps {
-                        sh '''
-                            echo "Hello, this is STAGE-1"
-                            sleep 15
-                        '''
-                    }
-                }
-                stage('STAGE-2') {
-                    steps {
-                        sh '''
-                            echo "Hello, this is STAGE-2"
-                            sleep 15
-                        '''
-                    }
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            echo "I will say hello again"
+  post { 
+        always { 
+            echo 'I will always say Hello again!'
             deleteDir()
         }
-        failure {
-            echo "I will run when pipeline fails"
+        failure { 
+            echo 'I will run when pipeline is failed'
         }
-        success {
-            echo "I will run when pipeline succeeds"
+        success { 
+            echo 'I will run when pipeline is success'
         }
     }
 }
