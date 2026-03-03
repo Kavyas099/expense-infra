@@ -17,13 +17,13 @@ pipeline {
         choices: ['apply', 'destroy'],
         description: 'pick something')
 
-    }
+         }
 
     stages {
         stage ('init') {
             steps {
                 script {
-                    withAWS(region 'us-east-1', credentials:'aws-creds' )
+                    withAWS(region: 'us-east-1', credentials:'aws-creds' )
                     sh """
                     cd 40-eks 
                     terraform init

@@ -14,8 +14,8 @@ pipeline {
     }
 
     parameters {
-        choices( name: 'action', 
-        choice [ 'apply' , 'destory']
+        choice( name: 'action', 
+        choices [ 'apply' , 'destory']
         description : 'pick something')
         
     }

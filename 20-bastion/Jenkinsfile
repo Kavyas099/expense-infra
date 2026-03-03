@@ -13,10 +13,12 @@ pipeline {
     }
 
     parameters{
-        choices (name: 'action',
-        choice: ['apply' , 'destroy']
+        choice (name: 'action',
+        choices: ['apply' , 'destroy']
         description: 'pick something')
     }
+
+     
 stages {
         stage('Init') {
             steps {
