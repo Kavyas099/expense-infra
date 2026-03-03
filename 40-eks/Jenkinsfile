@@ -1,5 +1,5 @@
 pipeline {
-    agent (label 'kavya') {
+    agent  { label 'kavya'} 
         environment {
             project = 'expense'
             environment = 'dev'

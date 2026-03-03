@@ -14,7 +14,7 @@ pipeline {
 
     parameters{
         choices (name: 'action',
-        choice: ['apply' or 'destroy']
+        choice: ['apply' , 'destroy']
         description: 'pick something')
     }
 stages {
