@@ -47,7 +47,7 @@ stages {
         }
 
 
-stage('Parallel Stages') {
+        stage('Parallel Stages') {
             when { 
                 expression { params.action == 'apply'}
             }
