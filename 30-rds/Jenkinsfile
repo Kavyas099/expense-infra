@@ -15,7 +15,7 @@ pipeline {
 
     parameters {
         choice( name: 'action', 
-        choices [ 'apply' , 'destory']
+        choices [ 'apply' , 'destory'],
         description : 'pick something')
         
     }
@@ -38,6 +38,7 @@ pipeline {
                 scrip {
                     withAWS(region: 'us-east-1', credentials: 'aws-creds')
                     sh """
+                    cd 30-rds
                     terraform apply -auto-approve
                     """
                 }
