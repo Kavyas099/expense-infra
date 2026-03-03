@@ -1,5 +1,5 @@
 pipeline {
-    agent (label 'kavya ') {
+    agent { label 'kavya '} 
         environment {
             project='expense'
             environment='backend'
@@ -8,7 +8,7 @@ pipeline {
     }
     options {
  disableConcurrentBuilds()
-    timeout(time: 30, unit: 'minutes')
+    timeout(time: 30, unit: 'MINUTES')
     ansiColor(xterm)
     }
    
@@ -24,11 +24,13 @@ stages {
     stage ('init') {
         steps {
             script {
-                withAWS(region: 'us-east-1', credentials:'aws-creds')
+                withAWS(region: 'us-east-1', credentials:'aws-creds') {
                 sh """
                 cd 60-acms
                 terraform init --reconfigure
                 """
+                }
+                
 
             }
         }
@@ -37,10 +39,12 @@ stages {
     stage ('appply ') {
         steps {
             script {
-                withAWS(REGION: 'us-east-1', credentials: 'aws-creds')
-                sh """
+                withAWS(REGION: 'us-east-1', credentials: 'aws-creds') {
+                    sh """
                     terraform apply -auto-approve
                 """
+                }
+                
         }
 
         }
@@ -61,5 +65,4 @@ post {
     success {
         echo 'i will run when pipeline is success'
     }
-}
 }
