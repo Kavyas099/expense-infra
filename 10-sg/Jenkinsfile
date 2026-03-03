@@ -45,35 +45,37 @@ stages {
                }
             }
         }
-}
 
-// stage('Parallel Stages') {
-//             when { 
-//                 expression { params.action == 'apply'}
-//             }
-//             parallel {
-//                 stage('20-bastion') {    
-//                     steps {
-//                         build job: '20-bastion', parameters: [string(name: 'action', value: 'apply')], wait: false
-//                     }
-//                 }
-//                 stage('30-rds') {
-//                     steps {
-//                         build job: '30-rds', parameters: [string(name: 'action', value: 'apply')], wait: false
-//                     }
-//                 }
-//                 stage('40-eks') {
-//                     steps {
-//                         build job: '40-eks', parameters: [string(name: 'action', value: 'apply')], wait: false
-//                     }
-//                 }
-//                 stage('50-ecr') {
-//                     steps {
-//                         build job: '50-ecr', parameters: [string(name: 'action', value: 'apply')], wait: false
-//                     }
-//                 }
-//             }
-//         }
+
+stage('Parallel Stages') {
+            when { 
+                expression { params.action == 'apply'}
+            }
+            parallel {
+                stage('20-bastion') {    
+                    steps {
+                        build job: '20-bastion', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+                stage('30-rds') {
+                    steps {
+                        build job: '30-rds', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+                stage('40-eks') {
+                    steps {
+                        build job: '40-eks', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+                stage('50-ecr') {
+                    steps {
+                        build job: '50-ecr', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+            }
+        }
+
+}
 //         stage('Sequential') {
 //             stages {
 //                 stage('60-acms') {
