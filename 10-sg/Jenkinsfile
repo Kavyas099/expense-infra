@@ -80,7 +80,7 @@ stages {
             stages {
                 stage('60-acms') {
                     steps {
-                        build job: '60-acm', parameters: [string(name: 'action', value: 'apply')], wait: false
+                        build job: '60-acms', parameters: [string(name: 'action', value: 'apply')], wait: false
                     }
                 }
                 stage('70-ingress-alb') {
