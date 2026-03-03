@@ -1,9 +1,9 @@
 variable "project_name" {
-  default = "roboshop"
+  default = "expense"
 }
 
 variable "environment" {
-  default = "qa"
+  default = "dev"
 }
 
 variable "vpc_cidr" {
@@ -13,9 +13,9 @@ variable "vpc_cidr" {
 variable "common_tags" {
   type = map
   default = {
-    project =  "divya"
+    project =  "expense"
     terraform = true
-    environment = "qa"
+    environment = "dev"
   }
 }
 

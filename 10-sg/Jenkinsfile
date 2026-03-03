@@ -1,15 +1,21 @@
 pipeline {
-    agent { label  'Agent-1'}
+    agent { label  'kavya'}
     environment {
-        PROJECT='ROBOSHOP'
-        ENVIRONMENT='QA'
-        DEPLOY_TO='production'
+        project='expense'
+        component='backend'
+        deploy_to='production'
     }
 
     options {
         disableConcurrentBuilds()
         timeout(time: 30, unit: 'MINUTES')
         ansiColor('xterm')
+    }
+
+    parameters{
+        choice( name: 'action',
+        choices: [ 'apply'  or 'destroy']
+        description: 'pick something')
     }
 
 stages {
@@ -28,10 +34,7 @@ stages {
             }
         }
         stage('Apply') {
-            input {
-                message "Should we continue?"
-                ok "Yes, we should."
-            }
+            
             steps {
                script{
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
@@ -45,6 +48,48 @@ stages {
             }
         }
 }
+
+stage('Parallel Stages') {
+            when { 
+                expression { params.action == 'apply'}
+            }
+            parallel {
+                stage('20-bastion') {    
+                    steps {
+                        build job: '20-bastion', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+                stage('30-rds') {
+                    steps {
+                        build job: '30-rds', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+                stage('40-eks') {
+                    steps {
+                        build job: '40-eks', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+                stage('50-ecr') {
+                    steps {
+                        build job: '50-ecr', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+            }
+        }
+        stage('Sequential') {
+            stages {
+                stage('60-acms') {
+                    steps {
+                        build job: '60-acm', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+                stage('70-ingress-alb') {
+                    steps {
+                        build job: '70-ingress-alb', parameters: [string(name: 'action', value: 'apply')], wait: false
+                    }
+                }
+            }
+        }
   post { 
         always { 
             echo 'I will always say Hello again!'

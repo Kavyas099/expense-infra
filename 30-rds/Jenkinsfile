@@ -1,0 +1,64 @@
+pipeline {
+    agent (label 'kavya')
+
+    environment {
+        project = 'expense'
+        deploy_to= 'production'
+        component = 'backend'
+    }
+
+    options {
+        disableConcurrentBuilds()
+        ansiColor ('xterm')
+        timeout(time: 30, unit: 'minutes')
+    }
+
+    parameters {
+        choices( name: 'action', 
+        choice [ 'apply' , 'destory']
+        description : 'pick something')
+        
+    }
+
+    stages {
+        stage ('init') {
+            steps {
+                script {
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds')
+                        sh """
+                        cd 30-rds
+                        terraform init
+                        """
+                }
+            }
+        }
+
+        stage ('apply') {
+            steps {
+                scrip {
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds')
+                    sh """
+                    terraform apply -auto-approve
+                    """
+                }
+            }
+        }
+
+
+    }
+
+    post {
+        always {
+            echo 'i will say hello again' 
+            deleteDir()
+        }
+
+        sucess {
+            echo 'i will run when pipeline is sucess'
+        }
+
+        failure {
+            echo 'i will run pipeline is failed'
+        }
+    }
+}

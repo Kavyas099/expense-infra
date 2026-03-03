@@ -1,0 +1,66 @@
+pipeline {
+    agent ( label 'kavya') 
+
+    environment {
+        project = 'expense'
+        component = 'backend'
+        deploy_to = 'production'
+    }
+
+    options {
+        disableConcurrentBuilds()
+        timeout (time: 30, unit: 'minutes')
+        ansiColor('xterm')
+    }
+
+    parameters{
+        choice(name: 'action',
+        choices: ['apply', 'destroy'],
+        description: 'pick something')
+
+        
+    }
+
+
+    stages {
+        stage ('init ') {
+            steps {
+                script {
+                    withAWS('region: us-east-1', credentials: 'aws-creds')
+                    sh """
+                    terraform init
+                    """
+                }
+            }
+        }
+
+        stage('apply') {
+            steps {
+                script {
+                    withAWS('region: us-east-1', credentials:'aws-creds')
+                    sh """
+                    terraform apply -auto-approve
+                    """
+                }
+            }
+        }
+
+
+    }
+
+    post {
+        always{
+            echo 'i will run when pipeliune hello again '
+            deleteDir()
+        }
+
+        success {
+            echo 'i will run when piopeline is sucess'
+        }
+
+        failure {
+                echo 'i will run when piepileune is fdsaild'
+        }
+    }
+
+}

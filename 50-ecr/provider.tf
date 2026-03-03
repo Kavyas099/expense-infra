@@ -2,14 +2,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.84.0"
+      version = ">=5.84.0"
     }
   }
 
 
   backend "s3" {
     bucket       = "divya-82s"
-    key          = "chaitan-sg"
+    key          = "chaitan-app-alb"
     region       = "us-east-1"
     use_lockfile = true
     encrypt      = true

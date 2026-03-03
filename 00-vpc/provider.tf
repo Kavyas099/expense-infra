@@ -9,7 +9,7 @@ terraform {
 
   backend "s3" {
     bucket       = "divya-82s"
-    key          = "devsat-vpc"
+    key          = "chaiatan -vpc"
     region       = "us-east-1"
     use_lockfile = true
     encrypt      = true

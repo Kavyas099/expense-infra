@@ -9,7 +9,7 @@ terraform {
 
   backend "s3" {
     bucket       = "divya-82s"
-    key          = "chaitan-sg"
+    key          = "chaitan-sg-eks"
     region       = "us-east-1"
     use_lockfile = true
     encrypt      = true
