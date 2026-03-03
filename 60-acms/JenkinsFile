@@ -1,68 +1,68 @@
 pipeline {
-    agent { label 'kavya '} 
-        environment {
-            project='expense'
-            environment='backend'
-            deploy_to='prod'
-        }
+    agent { label 'kavya' }
+
+    environment {
+        project = 'expense'
+        component = 'backend'
+        deploy_to = 'production'
     }
+
     options {
- disableConcurrentBuilds()
-    timeout(time: 30, unit: 'MINUTES')
-    ansiColor(xterm)
+        disableConcurrentBuilds()
+        timeout(time: 30, unit: 'MINUTES')
+        ansiColor('xterm')
     }
-   
 
-parameters{
-    choice(name: 'Action',
-    choices['apply', 'destroy'],
-    description: 'pick something' )
-}
+    parameters {
+        choice(
+            name: 'Action',
+            choices: ['apply', 'destroy'],
+            description: 'Pick something'
+        )
+    }
 
+    stages {
 
-stages {
-    stage ('init') {
-        steps {
-            script {
-                withAWS(region: 'us-east-1', credentials:'aws-creds') {
-                sh """
-                cd 60-acms
-                terraform init --reconfigure
-                """
+        stage('Init') {
+            steps {
+                script {
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
+                            cd 60-acms
+                            terraform init -reconfigure
+                        """
+                    }
                 }
-                
-
             }
         }
-    }
 
-    stage ('appply ') {
-        steps {
-            script {
-                withAWS(REGION: 'us-east-1', credentials: 'aws-creds') {
-                    sh """
-                    terraform apply -auto-approve
-                """
+        stage('Apply or Destroy') {
+            steps {
+                script {
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
+                            cd 60-acms
+                            terraform apply -auto-approve
+                        """
+                    }
                 }
-                
+            }
         }
 
+    }
+
+    post {
+        always {
+            echo 'I will say hello again'
+            deleteDir()
         }
-        
-    }
-}
 
-post {
-    always {
-        echo 'i will say hello again '
-        deleteDir()
-    }
+        failure {
+            echo 'Pipeline failed'
+        }
 
-    failure {
-        echo 'i wil run when pipeline is failed' 
-    }
-
-    success {
-        echo 'i will run when pipeline is success'
+        success {
+            echo 'Pipeline succeeded'
+        }
     }
 }
