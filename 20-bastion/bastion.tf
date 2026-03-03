@@ -1,6 +1,6 @@
 resource "aws_instance" "this" {
   ami                    = data.aws_ami.kavya.id # This is our devops-practice AMI ID
-  vpc_security_group_ids = ["sg-004f05edcd1ea06f5"]
+  vpc_security_group_ids = [data.aws_ssm_parameter.bastion_sg_id.value]
   instance_type          = "t3.micro"
   subnet_id              = local.public_subnet_id
 

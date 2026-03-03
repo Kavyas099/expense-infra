@@ -1,46 +1,53 @@
 pipeline {
-    agent  { label 'kavya'} 
-        environment {
-            project = 'expense'
-            environment = 'dev'
-            deploy_to = 'prod'
-        }
+    agent { label 'kavya' }
 
-        options {
-            disableConcurrentBuilds()
-            ansiColor('xterm')
-            timeout(time: 30, unit: 'minutes')
-        }
+    environment {
+        project = 'expense'
+        environment_name = 'dev'
+        deploy_to = 'prod'
+    }
 
-        parameters{
-        choice(name: 'action',
-        choices: ['apply', 'destroy'],
-        description: 'pick something')
+    options {
+        disableConcurrentBuilds()
+        ansiColor('xterm')
+        timeout(time: 30, unit: 'MINUTES')
+    }
 
-         }
+    parameters {
+        choice(
+            name: 'action',
+            choices: ['apply', 'destroy'],
+            description: 'pick something'
+        )
+    }
 
     stages {
-        stage ('init') {
+
+        stage('Init') {
             steps {
                 script {
-                    withAWS(region: 'us-east-1', credentials:'aws-creds' )
-                    sh """
-                    cd 40-eks 
-                    terraform init
-                    """
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
+                            cd 40-eks
+                            terraform init
+                        """
+                    }
                 }
             }
         }
 
-        stage('apply') {
+        stage('Apply') {
+            when {
+                expression { params.action == 'apply' }
+            }
             steps {
                 script {
-                    withAWS(region 'us-east-1', credentials: 'aws-creds')
-                    sh """
-                    cd 40-eks
-                    terraform apply -auto-approve
-                    """
-
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
+                            cd 40-eks
+                            terraform apply -auto-approve
+                        """
+                    }
                 }
             }
         }
@@ -48,18 +55,16 @@ pipeline {
 
     post {
         always {
-            echo 'i will run always heloo agaiun'
+            echo 'I will run always hello again'
             deleteDir()
         }
 
-        suceess {
-            echo 'I will run when pipeline is sucess'
+        success {
+            echo 'I will run when pipeline is success'
         }
 
         failure {
-            echo 'i will run when pipelibne ius failed'
+            echo 'I will run when pipeline is failed'
         }
     }
-}
-
 }

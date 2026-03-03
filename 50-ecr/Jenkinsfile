@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'kavya'}
+    agent { label 'kavya' }
 
     environment {
         project = 'expense'
@@ -9,61 +9,57 @@ pipeline {
 
     options {
         disableConcurrentBuilds()
-        timeout(time: 30, unit:'minutes')
+        timeout(time: 30, unit: 'MINUTES')
         ansiColor('xterm')
     }
 
-    parameters{
+    parameters {
         choice(name: 'action',
-        choices: ['apply', 'destroy'],
-        description: 'pick something')
-
-        
+               choices: ['apply', 'destroy'],
+               description: 'Select Terraform action')
     }
 
-
     stages {
-        stage ('init ') {
-            steps {
-                script {
-                    withAWS(region: 'us-east-1', credentials: 'aws-creds')
-                    sh """
-                    cd 50-ecr 
-                    terraform init
-                    """
-                }
-            }
-        }
-        
 
-        stage('apply') {
+        stage('Terraform Init') {
             steps {
                 script {
-                    withAWS(region: 'us-east-1', credentials:'aws-creds')
-                    sh """
-                    cd 50-ecr 
-                    terraform apply -auto-approve
-                    """
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
+                        cd 50-ecr
+                        terraform init
+                        """
+                    }
                 }
             }
         }
 
-
+        stage('Terraform Apply/Destroy') {
+            steps {
+                script {
+                    withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+                        sh """
+                        cd 50-ecr
+                        terraform ${params.action} -auto-approve
+                        """
+                    }
+                }
+            }
+        }
     }
 
     post {
-        always{
-            echo 'i will run when pipeliune hello again '
+        always {
+            echo 'Pipeline completed'
             deleteDir()
         }
 
         success {
-            echo 'i will run when piopeline is sucess'
+            echo 'Pipeline succeeded'
         }
 
         failure {
-                echo 'i will run when piepileune is fdsaild'
+            echo 'Pipeline failed'
         }
     }
-
 }

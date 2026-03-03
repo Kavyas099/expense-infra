@@ -10,12 +10,12 @@ pipeline {
     options {
         disableConcurrentBuilds()
         ansiColor ('xterm')
-        timeout(time: 30, unit: 'minutes')
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     parameters {
         choice( name: 'action', 
-        choices [ 'apply' , 'destory'],
+        choices: [ 'apply' , 'destory'],
         description : 'pick something')
         
     }
@@ -29,13 +29,13 @@ pipeline {
                         cd 30-rds
                         terraform init
                         """
-                }
+                }}
             }
         }
 
         stage ('apply') {
             steps {
-                scrip {
+                script {
                     withAWS(region: 'us-east-1', credentials: 'aws-creds')
                     sh """
                     cd 30-rds
@@ -54,7 +54,7 @@ pipeline {
             deleteDir()
         }
 
-        sucess {
+        success {
             echo 'i will run when pipeline is sucess'
         }
 
