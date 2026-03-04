@@ -42,7 +42,7 @@ pipeline {
                         sh """
                             cd 70-ingress-alb
                             terraform plan
-                            terraform ${ params.action } -auto-approve
+                            terraform apply -auto-approve
                         """
                     } else {
                         sh """

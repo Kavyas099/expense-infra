@@ -38,7 +38,7 @@ stages {
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                     sh """
                         cd 10-sg
-                        terraform ${ params.action } -auto-approve
+                        terraform apply -auto-approve
                     """
                 }
                  
