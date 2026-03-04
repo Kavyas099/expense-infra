@@ -27,7 +27,7 @@ stages {
                     sh """
                         cd 20-bastion
                         terraform init -reconfigure
-                        terraform plan
+                      
                     """
                 }
                  

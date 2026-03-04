@@ -41,7 +41,7 @@ pipeline {
                      if (params.action == 'apply') {
                         sh """
                             cd 70-ingress-alb
-                            terraform plan
+                            
                             terraform apply -auto-approve
                         """
                     } else {
