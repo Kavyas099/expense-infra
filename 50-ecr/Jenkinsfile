@@ -26,7 +26,11 @@ pipeline {
                 script {
                     withAWS(region: 'us-east-1', credentials: 'aws-creds') {
                         sh """
-                        cd 50-ecr
+                          cd 50-ecr
+                        rm -rf .terraform
+                        rm -f .terraform.lock.hcl
+
+                      
                         terraform init
                         """
                     }
