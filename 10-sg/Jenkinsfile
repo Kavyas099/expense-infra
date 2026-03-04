@@ -24,7 +24,7 @@ stages {
                     sh """
                         cd 10-sg
                         terraform init -reconfigure
-                        terraform plan
+                        
                     """
                 }
                  
